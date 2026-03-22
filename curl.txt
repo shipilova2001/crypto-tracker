@@ -1,0 +1,19 @@
+curl -i -X POST http://127.0.0.1:8080/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{"Username":"Polina","Password":"122222"}'
+     
+curl -i -X POST http://127.0.0.1:8080/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"Username":"Polina","Password":"122222"}'
+     
+     
+     
+curl -i -b cookies.txt http://127.0.0.1:8080/crypto
+     
+curl -i -b cookies.txt -X POST http://127.0.0.1:8080/crypto \
+  -H "Content-Type: application/json" \
+  -d '{"Symbol":"BTC"}'
+  
+curl -i -b cookies.txt -X PUT http://127.0.0.1:8080/crypto/BTC/refresh
+
+curl -i -b cookies.txt -X GET http://127.0.0.1:8080/crypto/BTC/history

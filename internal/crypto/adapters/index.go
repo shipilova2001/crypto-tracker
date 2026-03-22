@@ -3,11 +3,12 @@ package adapters
 import (
 	config 			"crypto-server/internal"
 	dtos			"crypto-server/internal/crypto/dtos"
+	models			"crypto-server/internal/crypto/models"
 )
 
 type CryptoAdapter interface {
 	GetList() []*dtos.CoinGeckoCryptoResponse
-	GetCrypto(symbol string) *dtos.CoinGeckoCryptoResponse
+	GetCrypto(id models.CryptoID) *dtos.CoinGeckoCryptoResponse
 }
 
 type cryptoAdapter struct {

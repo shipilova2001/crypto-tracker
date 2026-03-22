@@ -2,6 +2,7 @@ package usecases
 
 import (
 	dtos "crypto-server/internal/crypto/dtos"
+	"crypto-server/internal/crypto/models"
 	"fmt"
 	"time"
 )
@@ -12,7 +13,7 @@ func (cryptoUC *cryptoUseCase) AddToTrackCrypto(symbol string) *dtos.CryptoItemR
 	if len(ID) == 0 {
 		return nil
 	}
-	crypto := cryptoUC.adapters.GetCrypto(ID)
+	crypto := cryptoUC.adapters.GetCrypto(models.CryptoID(ID))
 	fmt.Println("crypto ", crypto)
 	if crypto == nil {
 		return nil

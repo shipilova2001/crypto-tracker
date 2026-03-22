@@ -1,16 +1,17 @@
 package adapters
 
 import (
+	dtos "crypto-server/internal/crypto/dtos"
+	"crypto-server/internal/crypto/models"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	dtos "crypto-server/internal/crypto/dtos"
 )
 
-func (cryptoAdapter *cryptoAdapter) GetCrypto(id string) *dtos.CoinGeckoCryptoResponse {
+func (cryptoAdapter *cryptoAdapter) GetCrypto(id models.CryptoID) *dtos.CoinGeckoCryptoResponse {
 	configAPI := cryptoAdapter.configAPI
-	url := configAPI.BaseURL + "/coins/" + id
+	url := configAPI.BaseURL + "/coins/" + string(id)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil

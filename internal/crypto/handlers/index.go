@@ -13,7 +13,7 @@ type CryptoHandler interface {
 	GetCrypto(w http.ResponseWriter, r *http.Request)
 	Get(w http.ResponseWriter, r *http.Request)
 	AddToTrack(w http.ResponseWriter, r *http.Request)
-	// Refresh (w http.ResponseWriter, r *http.Request)
+	Refresh (w http.ResponseWriter, r *http.Request)
 }
 
 type cryptoHandler struct {
@@ -58,5 +58,45 @@ func (handler *cryptoHandler) AddToTrack(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	// fmt.Println("response  ", response)
+	shared.WriteJSON(w, response, http.StatusOK)
+}
+
+func (handler *cryptoHandler) Refresh(w http.ResponseWriter, r *http.Request) {
+	symbol := r.PathValue("symbol")
+	response := handler.cryptoUseCase.Refresh(symbol)
+	if response == nil {
+		shared.WriteJSON(w, response, http.StatusNotFound)
+		return
+	}
+	shared.WriteJSON(w, response, http.StatusOK)
+}
+
+func (handler *cryptoHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
+	symbol := r.PathValue("symbol")
+	response := handler.cryptoUseCase.GetHistory(symbol)
+	if response == nil {
+		shared.WriteJSON(w, response, http.StatusNotFound)
+		return
+	}
+	shared.WriteJSON(w, response, http.StatusOK)
+}
+
+func (handler *cryptoHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	symbol := r.PathValue("symbol")
+	response := handler.cryptoUseCase.Delete(symbol)
+	if response == nil {
+		shared.WriteJSON(w, response, http.StatusNotFound)
+		return
+	}
+	shared.WriteJSON(w, response, http.StatusOK)
+}
+
+func (handler *cryptoHandler) Stats(w http.ResponseWriter, r *http.Request) { 
+	symbol := r.PathValue("symbol")
+	response := handler.cryptoUseCase.Stats(symbol)
+	if response == nil {
+		shared.WriteJSON(w, response, http.StatusNotFound)
+		return
+	}
 	shared.WriteJSON(w, response, http.StatusOK)
 }

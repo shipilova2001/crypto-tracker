@@ -2,8 +2,10 @@ package models
 
 import "time"
 
+type CryptoID string
+
 type Crypto struct {
-	ID 				string
+	ID 				CryptoID
 	Symbol 			string
 	Name 			string
 	CurrentPrice 	float64

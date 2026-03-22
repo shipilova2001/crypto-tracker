@@ -33,8 +33,8 @@ func main() {
 	authHandler := usershandlers.New(userUsecase, &configAll.JWT)
 	
 	//крипта
-	cryptoRepo := cryptorepositories.New(localstorage)
 	cryptoAdapter := cryptoadapters.New(configAll.API)
+	cryptoRepo := cryptorepositories.New(localstorage, cryptoAdapter)
 	cryptoUsecase := cryptousecases.New(cryptoAdapter, cryptoRepo)
 	cryptoHandler := cryptohandlers.New(cryptoUsecase)
 	cryptoUsecase.InitCoinMapping()
