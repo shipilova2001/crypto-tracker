@@ -31,3 +31,45 @@
 
 Откуда сервер берет данные о криптовалютах
 Сервер использует внешний сервис CoinGecko.
+
+Описание API
+Аутентификация
+POST /auth/register - регистрация нового пользователя
+
+Body: {"username": "string", "password": "string"}
+Success (201): {"token": "string"}
+Error (400/409): {"error": "string"}
+POST /auth/login - вход пользователя
+
+Body: {"username": "string", "password": "string"}
+Success (200): {"token": "string"}
+Error (400/401): {"error": "string"}
+CRUD операции для криптовалют
+Все операции требуют аутентификации через заголовок Authorization: Bearer <token>
+
+GET /crypto - получить список всех криптовалют
+
+Response: {"cryptos": [{"symbol": "BTC", "name": "Bitcoin", "current_price": 45000.50, "last_updated": "2024-01-01T12:00:00Z"}]}
+POST /crypto - добавить новую криптовалюту для отслеживания
+
+Body: {"symbol": "BTC"}
+Success (201): {"crypto": {...}}
+Error (400/409/500): {"error": "string"}
+GET /crypto/{symbol} - получить информацию о конкретной криптовалюте
+
+Success (200): {"symbol": "BTC", "name": "Bitcoin", "current_price": 45000.50, "last_updated": "2024-01-01T12:00:00Z"}
+Error (404): {"error": "string"}
+PUT /crypto/{symbol}/refresh - принудительно обновить цену криптовалюты
+
+Success (200): {"crypto": {...}}
+Error (404/500): {"error": "string"}
+GET /crypto/{symbol}/history - получить историю цен криптовалюты
+
+Response: {"symbol": "BTC", "history": [{"price": 45000.50, "timestamp": "2024-01-01T12:00:00Z"}]}
+GET /crypto/{symbol}/stats - получить статистику по ценам криптовалюты
+
+Response: {"symbol": "BTC", "current_price": 45000.50, "stats": {"min_price": 44000, "max_price": 46000, "avg_price": 45000, "price_change": 1000, "price_change_percent": 2.27, "records_count": 100}}
+DELETE /crypto/{symbol} - удалить криптовалюту из отслеживания (включая историю)
+
+Success (200): {} (пустой объект)
+Error (404): {"error": "string"}

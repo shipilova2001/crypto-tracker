@@ -87,7 +87,7 @@ func (authUC *authUseCase) Login(user *dtos.Auth) *dtos.Response {
 	}
 
 	return &dtos.Response{
-		Code:    http.StatusAccepted,
+		Code:    http.StatusOK,
 		Message: "User login succesfully",
 		Data:    &dtos.UserResponse{
 			ID:        doesExist.ID,

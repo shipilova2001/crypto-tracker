@@ -13,7 +13,7 @@ type CryptoUseCase interface {
  	AddToTrackCrypto(symbol string) *dtos.CryptoItemResponse
 	Get() *dtos.CryptoListResponse
 	GetCrypto(symbol string) *dtos.CryptoResponse
-	Refresh(symbol string) *dtos.CryptoResponse
+	Refresh(symbol string) *dtos.CryptoItemResponse
 	GetHistory(symbol string) *historydtos.HistoryResponse
 	Delete(symbol string) any
 	Stats(symbol string) *dtos.StatsResponse

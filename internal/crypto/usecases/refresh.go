@@ -5,7 +5,7 @@ import (
 	modelCrypto "crypto-server/internal/crypto/models"
 )
 
-func (cryptoUC *cryptoUseCase) Refresh(symbol string) *dtos.CryptoResponse {
+func (cryptoUC *cryptoUseCase) Refresh(symbol string) *dtos.CryptoItemResponse {
 	ID := cryptoUC.repositories.GetCryptoID(symbol)
 	if len(ID) == 0 {
 		return nil
@@ -15,10 +15,12 @@ func (cryptoUC *cryptoUseCase) Refresh(symbol string) *dtos.CryptoResponse {
 		return nil
 	}
 
-	return &dtos.CryptoResponse{
-		Symbol:       data.Symbol,
-		Name:         data.Name,
-		CurrentPrice: data.CurrentPrice,
-		LastUpdated:  data.LastUpdated,
+	return &dtos.CryptoItemResponse{
+		Crypto: &dtos.CryptoResponse{
+			Symbol:       data.Symbol,
+			Name:         data.Name,
+			CurrentPrice: data.CurrentPrice,
+			LastUpdated:  data.LastUpdated,
+		},
 	}
 }

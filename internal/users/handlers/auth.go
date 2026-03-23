@@ -1,14 +1,13 @@
 package handlers
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"crypto-server/internal/users/services"
-	dtos "crypto-server/internal/users/dtos"
 	config "crypto-server/internal"
-	usecases "crypto-server/internal/users/usecases"
 	shared "crypto-server/internal/shared"
+	dtos "crypto-server/internal/users/dtos"
+	"crypto-server/internal/users/services"
+	usecases "crypto-server/internal/users/usecases"
+	"encoding/json"
+	"net/http"
 )
 
 type UserHandler interface {
@@ -28,17 +27,14 @@ func New(authUC usecases.AuthUseCase, cookieConfig *config.JWTConfig) *AuthHandl
 	}
 }
 
-
 func (authHandler *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var auth dtos.AuthJSON
 	err := json.NewDecoder(r.Body).Decode(&auth)
 	if err != nil {
-		response := &dtos.Response{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
-			Data:    nil,
+		resp := &dtos.ResponseError{
+			Error: err.Error(),
 		}
-		shared.WriteJSON(w, response, http.StatusBadRequest)
+		shared.WriteJSON(w, resp, http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
@@ -49,74 +45,87 @@ func (authHandler *AuthHandler) Register(w http.ResponseWriter, r *http.Request)
 	}
 
 	if err := services.Validation(user); err != nil {
-		shared.WriteJSON(w, err, http.StatusUnprocessableEntity)
+		resp := &dtos.ResponseError{
+			Error: err.Message,
+		}
+		shared.WriteJSON(w, resp, http.StatusUnprocessableEntity)
 		return
 	}
 
 	response := authHandler.authUC.Register(user)
 	if response.Code < 200 || response.Code > 299 {
-		shared.WriteJSON(w, response, response.Code)
+		resp := &dtos.ResponseError{
+			Error: response.Message,
+		}
+		shared.WriteJSON(w, resp, response.Code)
 		return
 	}
 
-	fmt.Println(response.Data)
-	cookie, err := shared.CreateCookies(w, response.Data.ID, *authHandler.CookieConfig)
-	if err != nil {
-		shared.WriteJSON(w, &dtos.Response{
-			Code: http.StatusInternalServerError,
-			Message: err.Error(),
-			Data: nil,
-		}, http.StatusInternalServerError)
-		return;
+	// fmt.Println(response.Data)
+	// cookie, err := shared.CreateCookies(w, response.Data.ID, *authHandler.CookieConfig)
+	// if err != nil {
+	// 	shared.WriteJSON(w, &dtos.Response{
+	// 		Code: http.StatusInternalServerError,
+	// 		Message: err.Error(),
+	// 		Data: nil,
+	// 	}, http.StatusInternalServerError)
+	// 	return;
+	// }
+	// http.SetCookie(w, cookie)
+	token := shared.SetToken(w, response.Data.ID, *authHandler.CookieConfig)
+	resp := &dtos.ResponseToken{
+		Token: token,
 	}
-
-	http.SetCookie(w, cookie)
-	shared.WriteJSON(w, response, response.Code)
+	shared.WriteJSON(w, resp, response.Code)
 }
-
-
 
 func (authHandler *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var auth dtos.AuthJSON
 	err := json.NewDecoder(r.Body).Decode(&auth)
 	if err != nil {
-		response := &dtos.Response{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
-			Data:    nil,
+		resp := &dtos.ResponseError{
+			Error: err.Error(),
 		}
-		shared.WriteJSON(w, response, response.Code)
+		shared.WriteJSON(w, resp, http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
-	
+
 	user := &dtos.Auth{
 		Username: auth.Username,
 		Password: auth.Password,
 	}
 	if err := services.Validation(user); err != nil {
-		shared.WriteJSON(w, err, http.StatusUnprocessableEntity)
+		resp := &dtos.ResponseError{
+			Error: err.Message,
+		}
+		shared.WriteJSON(w, resp, http.StatusUnprocessableEntity)
 		return
 	}
-	
+
 	response := authHandler.authUC.Login(user)
-	//TODO убрать в функцию
+
 	if response.Code < 200 || response.Code > 299 {
-		shared.WriteJSON(w, response, response.Code)
+		resp := &dtos.ResponseError{
+			Error: response.Message,
+		}
+		shared.WriteJSON(w, resp, response.Code)
 		return
 	}
 
-
-	// fmt.Println(response.Data)
-	cookie, err := shared.CreateCookies(w, response.Data.ID, *authHandler.CookieConfig)
-	if err != nil {
-		shared.WriteJSON(w, &dtos.Response{
-			Code: http.StatusInternalServerError,
-			Message: err.Error(),
-			Data: nil,
-		}, response.Code)
-		return;
+	// cookie, err := shared.CreateCookies(w, response.Data.ID, *authHandler.CookieConfig)
+	// if err != nil {
+	// 	shared.WriteJSON(w, &dtos.Response{
+	// 		Code: http.StatusInternalServerError,
+	// 		Message: err.Error(),
+	// 		Data: nil,
+	// 	}, response.Code)
+	// 	return;
+	// }
+	// http.SetCookie(w, cookie)
+	token := shared.SetToken(w, response.Data.ID, *authHandler.CookieConfig)
+	resp := &dtos.ResponseToken{
+		Token: token,
 	}
-	http.SetCookie(w, cookie)
-	shared.WriteJSON(w, response, response.Code)
+	shared.WriteJSON(w, resp, response.Code)
 }

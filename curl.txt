@@ -10,10 +10,15 @@ curl -i -X POST http://127.0.0.1:8080/auth/register \
      
 curl -i -b cookies.txt http://127.0.0.1:8080/crypto
      
-curl -i -b cookies.txt -X POST http://127.0.0.1:8080/crypto \
+curl -i -X POST http://127.0.0.1:8080/crypto \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsInN1YiI6InVzZXJfYXV0aGVudGljYXRpb24iLCJleHAiOjE3NzQzMjE2NDIsIm5iZiI6MTc3NDIzNTI0MiwiaWF0IjoxNzc0MjM1MjQyfQ.TybioZNy0i7ICLUl0TkkSJ9aPmclQCyFzLZSVHWAP_I" \
   -d '{"Symbol":"BTC"}'
   
-curl -i -b cookies.txt -X PUT http://127.0.0.1:8080/crypto/BTC/refresh
+curl -i -X PUT http://127.0.0.1:8080/crypto/BTC/refresh \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsInN1YiI6InVzZXJfYXV0aGVudGljYXRpb24iLCJleHAiOjE3NzQzMjE2NDIsIm5iZiI6MTc3NDIzNTI0MiwiaWF0IjoxNzc0MjM1MjQyfQ.TybioZNy0i7ICLUl0TkkSJ9aPmclQCyFzLZSVHWAP_I" \
 
 curl -i -b cookies.txt -X GET http://127.0.0.1:8080/crypto/BTC/history
+
+
+curl -i http://127.0.0.1:8080/crypto -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsInN1YiI6InVzZXJfYXV0aGVudGljYXRpb24iLCJleHAiOjE3NzQzMjE2NDIsIm5iZiI6MTc3NDIzNTI0MiwiaWF0IjoxNzc0MjM1MjQyfQ.TybioZNy0i7ICLUl0TkkSJ9aPmclQCyFzLZSVHWAP_I"

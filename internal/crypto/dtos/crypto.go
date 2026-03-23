@@ -28,7 +28,7 @@ type CryptoListResponse struct {
 	Cryptos []*CryptoResponse `json:"cryptos"`
 }
 type CryptoItemResponse struct {
-	Crypto []*CryptoResponse `json:"crypto"`
+	Crypto *CryptoResponse    `json:"crypto"`
 }
 
 
@@ -62,5 +62,5 @@ type StatsItemResponse struct {
 type StatsResponse struct {
 	Symbol       string      		`json:"symbol"`
 	CurrentPrice float64      		`json:"current_price"`
-	Stats        StatsItemResponse   	
+	Stats        StatsItemResponse  `json:"stats"`
 }

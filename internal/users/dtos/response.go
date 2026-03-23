@@ -10,3 +10,10 @@ type ResponseJSON struct {
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 }
+
+type ResponseToken struct {
+	Token 	string `json:"token"`
+}
+type ResponseError struct {
+	Error 	string `json:"error"`
+}
