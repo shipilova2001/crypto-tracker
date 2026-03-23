@@ -17,6 +17,7 @@ type CryptoUseCase interface {
 	GetHistory(symbol string) *historydtos.HistoryResponse
 	Delete(symbol string) any
 	Stats(symbol string) *dtos.StatsResponse
+	RefreshAll()
 }
 
 type cryptoUseCase struct {

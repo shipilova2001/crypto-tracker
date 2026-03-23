@@ -1,26 +1,29 @@
 package main
 
 import (
+	"context"
+	config "crypto-server/internal"
+	scheduler "crypto-server/internal/infrastructure/scheduler"
+	infrastructure "crypto-server/internal/infrastructure"
 	"fmt"
 	"net/http"
+
 	"github.com/joho/godotenv"
-	config "crypto-server/internal"
-	infrastructure "crypto-server/internal/infrastructure"
-	
+
 	usershandlers "crypto-server/internal/users/handlers"
-	usersusecases "crypto-server/internal/users/usecases"
 	userrepositories "crypto-server/internal/users/repositories"
-	
-	cryptohandlers "crypto-server/internal/crypto/handlers"
-	cryptousecases "crypto-server/internal/crypto/usecases"
-	cryptorepositories "crypto-server/internal/crypto/repositories"
+	usersusecases "crypto-server/internal/users/usecases"
+
 	cryptoadapters "crypto-server/internal/crypto/adapters"
+	cryptohandlers "crypto-server/internal/crypto/handlers"
+	cryptorepositories "crypto-server/internal/crypto/repositories"
+	cryptousecases "crypto-server/internal/crypto/usecases"
 )
 
 func init() {
-    if err := godotenv.Load(); err != nil {
-        fmt.Print("No .env file found")
-    }
+	if err := godotenv.Load(); err != nil {
+		fmt.Print("No .env file found")
+	}
 }
 
 func main() {
@@ -32,25 +35,30 @@ func main() {
 	userRepo := userrepositories.New(localstorage)
 	userUsecase := usersusecases.New(userRepo)
 	authHandler := usershandlers.New(userUsecase, &configAll.JWT)
-	
+
 	//крипта
 	cryptoAdapter := cryptoadapters.New(configAll.API)
 	cryptoRepo := cryptorepositories.New(localstorage, cryptoAdapter)
 	cryptoUsecase := cryptousecases.New(cryptoAdapter, cryptoRepo)
 	cryptoHandler := cryptohandlers.New(cryptoUsecase)
 	cryptoUsecase.InitCoinMapping()
-	
-	
+
 	cryptohandlers.InitHandleCrypto(cryptoHandler, mux, configAll.JWT)
 	usershandlers.InitHandleUser(authHandler, mux)
-	
+
 	// for i, item := range localstorage.NamingMapSymbolID {
 	// 	fmt.Println(i, "        ", item)
 	// }
-	
-	err := http.ListenAndServe(":8080", mux)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	// 
+	ctx, _ := context.WithCancel(context.Background())
+	go scheduler.UpdatePrices(ctx, cryptoUsecase)
+
+	func() {
+		err := http.ListenAndServe(":8080", mux)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}()
+
 }

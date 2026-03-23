@@ -24,3 +24,15 @@ func (cryptoUC *cryptoUseCase) Refresh(symbol string) *dtos.CryptoItemResponse {
 		},
 	}
 }
+
+func (cryptoUC *cryptoUseCase) RefreshAll() {
+	cryptos := cryptoUC.repositories.Get()
+	// response := &dtos.CryptoListResponse{
+	// 	Cryptos: make([]*dtos.CryptoResponse, 0),
+	// }
+	for _, item := range cryptos {
+		cryptoUC.Refresh(item.Symbol)
+		// response.Cryptos = append(response.Cryptos, crypto.Crypto)
+	}
+	// return response
+}
