@@ -26,4 +26,5 @@ func InitHandleCrypto(handler handlerCrypto, mux *http.ServeMux, config config.J
 	mux.Handle("GET /crypto/{symbol}/stats", infrastructure.AuthMiddleware(http.HandlerFunc(handler.Stats), config))
 	mux.Handle("PUT /crypto/{symbol}/refresh", infrastructure.AuthMiddleware(http.HandlerFunc(handler.Refresh), config))
 	mux.Handle("DELETE /crypto/{symbol}", infrastructure.AuthMiddleware(http.HandlerFunc(handler.Delete), config))
+
 }
